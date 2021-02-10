@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using DevPh.Api.Configuration;
 using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DevPh.Api
 {
@@ -22,6 +23,9 @@ namespace DevPh.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddControllers().AddNewtonsoftJson(options =>
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+            );
 
             services.AddAutoMapper(typeof(Startup));
 
@@ -31,6 +35,12 @@ namespace DevPh.Api
             });
 
             services.AddControllers();
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                //Permite personalizar os retornos de erro da API
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             services.ResolveDependencies();
         }
